@@ -1,0 +1,15 @@
+.wrapper {
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  overflow-x: hidden;
+  transition: margin 0.5s ease-in-out, width 0.5s ease-in-out;
+}
+.wrapperExpanded {
+  margin-left: 20px;
+  width: calc(100% - 20px);
+}
+.wrapperCollapsed {
+  margin-left: 200px;
+  width: calc(100% - 200px);
+}

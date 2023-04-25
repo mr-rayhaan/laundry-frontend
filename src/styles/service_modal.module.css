@@ -1,0 +1,17 @@
+.modalWrapper {
+  background-color: grey !important;
+}
+.gridLayout {
+  display: grid;
+  max-width: 1500px;
+  justify-content: center;
+  grid-template-columns: repeat(3, 25%);
+  column-gap: 5rem;
+  row-gap: 0px;
+  margin: 0 auto;
+  background-color: aliceblue;
+}
+.gridItem {
+  background-color: white;
+  border: 2px solid pink;
+}

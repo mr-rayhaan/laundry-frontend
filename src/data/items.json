@@ -1,0 +1,201 @@
+[
+  {
+    "id": 1,
+    "name": "shirt",
+    "icon": "assets/icons/shirt.png",
+    "services": [
+      {
+        "id": 1,
+        "type": "wash",
+        "sizes": { 
+          "small": 1,
+          "medium": 1.5,
+          "large": 2,
+          "custom": null
+        }
+      },
+      {
+        "id": 2,
+        "type": "iron",
+        "sizes": {
+          "small": 1.5,
+          "medium": 2,
+          "large": 2.5,
+          "custom": null
+        }
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "pant",
+    "icon": "assets/icons/pant.png",
+    "services": [
+      {
+        "id": 1,
+        "type": "wash",
+        "sizes": {
+          "small": 1,
+          "medium": 1.5,
+          "large": 2,
+          "custom": null
+        }
+      },
+      {
+        "id": 2,
+        "type": "iron",
+        "sizes": {
+          "small": 1.5,
+          "medium": 2,
+          "large": 2.5,
+          "custom": null
+        }
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "blanket",
+    "icon": "assets/icons/blanket.png",
+    "services": [
+      {
+        "id": 1,
+        "type": "wash",
+        "sizes": {
+          "small": 1,
+          "medium": 1.5,
+          "large": 2,
+          "custom": null
+        }
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "abaya",
+    "icon": "assets/icons/abaya.png",
+    "services": [
+      {
+        "id": 1,
+        "type": "wash",
+        "sizes": {
+          "small": 2,
+          "medium": 2.5,
+          "large": 3,
+          "custom": null
+        }
+      },
+      {
+        "id": 2,
+        "type": "iron",
+        "sizes": {
+          "small": 1.5,
+          "medium": 2,
+          "large": 2.5,
+          "custom": null
+        }
+      },
+      {
+        "id": 3,
+        "type": "dry clean",
+        "sizes": {
+          "small": 5,
+          "medium": 7,
+          "large": 10,
+          "custom": null
+        }
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "coat",
+    "icon": "assets/icons/coat.png",
+    "services": [
+      {
+        "id": 1,
+        "type": "wash",
+        "sizes": {
+          "small": 4,
+          "medium": 5,
+          "large": 6,
+          "custom": null
+        }
+      },
+      {
+        "id": 3,
+        "type": "dry clean",
+        "sizes": {
+          "small": 6,
+          "medium": 8,
+          "large": 10,
+          "custom": null
+        }
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "jacket",
+    "icon": "assets/icons/jacket.png",
+    "services": [
+      {
+        "id": 1,
+        "type": "wash",
+        "wash": {
+          "small": 4,
+          "medium": 6,
+          "large": 8,
+          "custom": null
+        }
+      },
+      {
+        "id": 3,
+        "type": "dry clean",
+        "sizes": {
+          "small": 6,
+          "medium": 8,
+          "large": 10,
+          "custom": null
+        }
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "suit",
+    "icon": "assets/icons/suit.png",
+    "services": [
+      {
+        "id": 1,
+        "type": "wash",
+        "sizes": {
+          "small": 2,
+          "medium": 3,
+          "large": 4,
+          "custom": null
+        }
+      },
+      {
+        "id": 2,
+        "type": "iron",
+        "sizes": {
+          "small": 2,
+          "medium": 3,
+          "large": 4,
+          "custom": null
+        }
+      },
+      {
+        "id": 3,
+        "type": "dry clean",
+        "sizes": {
+          "small": 5,
+          "medium": 8,
+          "large": 12,
+          "custom": null
+        }
+      }
+    ]
+  }
+]

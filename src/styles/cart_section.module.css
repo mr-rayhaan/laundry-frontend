@@ -1,0 +1,8 @@
+.cartSection {
+  flex: 1;
+  background-color: aliceblue;
+}
+.tableCaption {
+  background-color: lightgrey;
+  text-align: center;
+}
