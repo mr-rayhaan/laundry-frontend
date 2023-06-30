@@ -6,13 +6,21 @@ import ItemsModel, { Services } from "../interfaces/ItemsModel";
 import ServiceType from "./modals/ServiceType";
 import CartProps from "../interfaces/CartProps";
 
+type CartContextProps = {
+  items?: Array<CartProps>;
+  cartTotal?: Object;
+  itemExists?: Function;
+  updateCartItemQuantity?: Function;
+  addToCart?: Function;
+};
+
 export default function ItemsSection() {
-  const [modalShow, setModalShow] = React.useState<boolean>(false);
+  const [modalService, setModalService] = React.useState<boolean>(false);
   const [selectedItem, setSelectedItem] = React.useState<ItemsModel>();
 
-  const { ...cartContext }: any = useContext(CartContext);
+  const { ...cartContext }: CartContextProps = useContext(CartContext);
 
-  console.log("ItemsSection", cartContext);
+  // console.log("ItemsSection", cartContext);
 
   const allItems: ItemsModel[] = ItemsData.map((element: any) => {
     const item = element as ItemsModel;
@@ -23,13 +31,13 @@ export default function ItemsSection() {
       services: item.services,
     };
   });
-  const items1: any = allItems.map((item: ItemsModel) => {
+  const displayItems: any = allItems.map((item: ItemsModel) => {
     return (
       <p
         key={item.id}
         onClick={() => {
           // console.log("selectedItem", item);
-          setModalShow(true);
+          setModalService(true);
           setSelectedItem(item);
         }}
       >
@@ -37,23 +45,34 @@ export default function ItemsSection() {
       </p>
     );
   });
-  function onSelectService(service: Services) { 
+  function onSelectService(service: Services) {
     const item: ItemsModel = { ...selectedItem! };
-    item.services = [service]; 
-    setModalShow(false);
+    item.services = [service];
+    setModalService(false);
+    // console.log("selectedItem name:", item.name);
 
-    const cartItem: CartProps = {id:cartContext.items.length+1,item:item,quantity:1};
-    cartContext.addToCart(cartItem); 
+    const result = cartContext.itemExists!(item);
+    // console.log("item exists= ", result);
+    if (result) {
+      cartContext.updateCartItemQuantity!(item);
+    } else {
+      const cartItem: CartProps = {
+        id: cartContext.items!.length + 1,
+        item: item,
+        quantity: 1,
+      };
+      cartContext.addToCart!(cartItem);
+    }
   }
   return (
     <div className={style.itemsSection}>
       <header>
-        <h1>Items Section={cartContext.items.length}</h1>
+        <h1>Items Section={cartContext.items!.length}</h1>
       </header>
-      <main className={style.gridLayout}>{items1}</main>
+      <main className={style.gridLayout}>{displayItems}</main>
       <ServiceType
-        show={modalShow}
-        onHide={() => setModalShow(false)}
+        show={modalService}
+        onHide={() => setModalService(false)}
         selectedItem={selectedItem}
         onSelectService={onSelectService}
       />

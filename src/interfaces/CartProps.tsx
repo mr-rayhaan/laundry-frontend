@@ -1,7 +1,12 @@
-import ItemsModel, { Services } from "./ItemsModel";
+import ItemsModel from "./ItemsModel";
 
 export default interface CartProps {
-    id: number;
-    item: ItemsModel;  
-    quantity: number;
+  id: number;
+  item: ItemsModel;
+  quantity: number;
+}
+
+export interface Cart {
+  discount: number;
+  totalAmount: number;
 }

@@ -1,48 +1,131 @@
-import React, { createContext, useState } from "react";
-import CartProps from "../interfaces/CartProps";
+import React, { ReactNode, createContext, useState } from "react";
+import CartProps, { Cart } from "../interfaces/CartProps";
 import ItemsModel from "../interfaces/ItemsModel";
 
 const CartContext = createContext({});
 
-export function CartProvider({ children }: any) {
-  console.log("CartProvider");
+type CartProviderProps = {
+  children: ReactNode;
+};
+
+export function CartProvider({ children }: CartProviderProps) {
+  // console.log("CartProvider");
   const [items, setItems] = useState<Array<CartProps>>([]);
+  const [cart, setCart] = useState<Cart>({ totalAmount: 0, discount: 0 });
 
   const addToCart = (item: CartProps) => {
-    console.log("addToCart");
+    console.log("Cart Context addToCart");
     setItems((prevState: Array<CartProps>) => [...prevState, item]);
+
+    let tempCart = {
+      totalAmount: cart.totalAmount + item.item.services[0].sizes!.regular,
+      discount: 0,
+    };
+    setCart(() => tempCart);
   };
-  const updateCartRateItem = (item: CartProps) => {
-    console.log("updateCart");
-    setItems((prevState: Array<CartProps>) => {
-      return { ...prevState, id: 9999 };
+
+  const itemExists = (item: ItemsModel) => {
+    if (items.length < 1) {
+      return false;
+    }
+    const result: CartProps = items.find(
+      (element) =>
+        element.item.id == item.id &&
+        element.item.services[0].id == item.services[0].id
+    )!;
+    if (result == undefined) {
+      return false;
+    }
+    return true;
+  };
+  const updateCartItemQuantity = (item: ItemsModel) => {
+    // console.log("update quantity");
+    let result = items;
+    result.map((e) => {
+      if (
+        e.item.id == item.id &&
+        e.item.services[0].id == item.services[0].id
+      ) {
+        console.log("increment quantity");
+        e.quantity = e.quantity + 1;
+        return e;
+      }
     });
+    calculateCartAmount();
+
+    setItems((prevState: Array<CartProps>) => [...result]);
+
+    // console.log(items);
+  };
+  const changeCartItemQuantity = (quantity: number, cartItemId: number) => {
+    console.log("editCartItemQuantity", quantity, cartItemId);
+    let result = items;
+    result.map((e) => {
+      if (e.id == cartItemId) {
+        e.quantity = quantity;
+        return e;
+      }
+    });
+
+    calculateCartAmount();
+
+    setItems((prevState: Array<CartProps>) => [...result]);
+  };
+  const changeCartItemRate = (rate: number, cartItem: CartProps) => {
+    console.log("changeCartItemRate", cartItem);
+    let cartItemfromState = items.filter((e) => e.id == cartItem.id)[0];
+    cartItemfromState.item.services.map((service) => {
+      if (service.type == cartItem.item.services[0].type) {
+        service.sizes!.custom = rate;
+      }
+    });
+    let result = items;
+    result.filter((e) => e.id == cartItem.id)[0] = cartItemfromState;
+
+    calculateCartAmount();
+
+    setItems((prevState: Array<CartProps>) => [...result]);
+  };
+  const changeCartDiscount = (discount: number) => {
+    console.log("changeCartDiscount", discount);
+
+    calculateCartAmount(discount);
+  };
+
+  const calculateCartAmount = (discount?: number) => {
+    let tempTotalAmount = 0;
+    items.forEach((element) => {
+      let unitPrice = 0;
+      if (element.item.services[0].sizes!.custom == null) {
+        unitPrice = element.item.services[0].sizes!.regular;
+      } else {
+        unitPrice = element.item.services[0].sizes!.custom;
+      }
+      tempTotalAmount += unitPrice * element.quantity;
+    });
+    let tempCart = {
+      totalAmount: tempTotalAmount - (discount == null ? cart.discount : discount),
+      discount: discount == null ? cart.discount : discount,
+    };
+    console.log(tempCart)
+    setCart(() => tempCart);
   };
   return (
-    <CartContext.Provider value={{ items, addToCart,updateCartRateItem }}>
+    <CartContext.Provider
+      value={{
+        items,
+        cart,
+        addToCart,
+        itemExists,
+        updateCartItemQuantity,
+        changeCartItemQuantity,
+        changeCartItemRate,
+        changeCartDiscount,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 }
 
 export default CartContext;
-// const CartContext = createContext({});
-
-// export function CartProvider({ children }: any) {
-//   console.log("CartProvider");
-//   const [items, setItems] = useState<Array<Object>>([
-//     { name: "name", price: 1 },
-//   ]);
-
-//   const addToCart = (name: string, price: number) => {
-//     console.log("addToCart");
-//     setItems((prevState) => [...prevState, { name, price }]);
-//   };
-//   return (
-//     <CartContext.Provider value={{ items, addToCart }}>
-//       {children}
-//     </CartContext.Provider>
-//   );
-// }
-
-// export default CartContext;
