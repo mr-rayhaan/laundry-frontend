@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-// import logo from "./logo.svg";
-import "./App.css";
-// import NavBar from "./components/NavBar";
+import React, { useState } from "react"; 
 import SideBar from "./components/SideBar";
 import MainSection from "./components/MainSection";
+import "./App.css";
 
 function App() {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
@@ -11,7 +9,7 @@ function App() {
   const ToggleSidebar = () => {
     isSideBarOpen === true ? setIsSideBarOpen(false) : setIsSideBarOpen(true);
   };
-  console.log("App");
+  
   return (
     <>
       <MainSection isSideBarOpen={isSideBarOpen} />
