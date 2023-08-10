@@ -2,14 +2,13 @@
   background-color: grey !important;
 }
 .gridLayout {
-  display: grid;
-  max-width: 1500px;
-  justify-content: center;
-  grid-template-columns: repeat(3, 25%);
-  column-gap: 5rem;
-  row-gap: 0px;
-  margin: 0 auto;
-  background-color: aliceblue;
+  /* display: grid; */
+  /* justify-content: center; */
+  grid-template-columns: auto auto auto;
+  /* column-gap: 5rem; */
+  /* row-gap: 1rem; */
+  /* margin: 0 auto; */
+  /* background-color: aliceblue; */
 }
 .gridItem {
   background-color: white;
