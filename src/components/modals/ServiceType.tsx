@@ -1,5 +1,5 @@
 // import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
+
 import React from "react";
 import Props from "../../interfaces/ServiceTypeProps";
 import { Services } from "../../interfaces/ItemsModel";
@@ -14,7 +14,7 @@ export default function ServiceType(props: Props) {
         return (
           <div
             key={item.id}
-            className={style.gridItem}
+            className={` cursor-pointer hover:bg-green-200 ${style.gridItem}`}
             onClick={() =>
               onSelectService!(
                 selectedItem.services.filter((e) => e.id == item.id)[0]
@@ -26,28 +26,37 @@ export default function ServiceType(props: Props) {
         );
       })
     ) : (
-      <>No</>
+      <>No item selected</>
     );
-  return (
-    <Modal
-      contentClassName={style.modalWrapper}
-      show={show}
-      onHide={onHide}
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          <h4>{selectedItem && selectedItem.name}</h4>
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div className={style.gridLayout}>{services}</div>
-      </Modal.Body>
-      <Modal.Footer>
-        {/* <Button onClick={props.onHide}>Close</Button> */}
-      </Modal.Footer>
-    </Modal>
-  );
+  const handleClick = (
+    event: React.MouseEvent<HTMLDivElement>,
+    toggle: Number
+  ) => {
+    event.stopPropagation();
+    console.log('toggle', toggle)
+    if (toggle == 0) {
+      console.log('hide it')
+      onHide()
+    }
+  };
+
+  if (show) {
+    return (
+      <div
+        onClick={(event) => handleClick(event, 0)}
+        className="absolute top-0 left-0 right-0 bottom-0 bg-black/[.4] flex justify-center items-center"
+      >
+        <div
+          onClick={(event) => handleClick(event, 1)}
+          className="h-[fit-content] bg-white p-2 rounded"
+        >
+          <h1>{selectedItem?.name}</h1>
+          <div className={`grid gap-10 p-10 ${style.gridLayout}`}>
+            {services}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return <></>;
 }

@@ -10,7 +10,7 @@ type CartContextProps = {
   changeCartItemQuantity?: Function;
   changeCartItemRate?: Function;
   cart?: Cart;
-  changeCartDiscount?: Function
+  changeCartDiscount?: Function;
 };
 
 export default function CartSection() {
@@ -37,7 +37,7 @@ export default function CartSection() {
   function onChangeDiscount(e: any) {
     const newDiscount: string = e.target.value;
     if (newDiscount.trim().length > 0) {
-      cartContext.changeCartDiscount!(Number(newDiscount))
+      cartContext.changeCartDiscount!(Number(newDiscount));
     }
   }
 
@@ -139,6 +139,9 @@ export default function CartSection() {
           </tr>
         </tbody>
       </table>
+      <button className="bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+        Save
+      </button>
     </div>
   );
 }
