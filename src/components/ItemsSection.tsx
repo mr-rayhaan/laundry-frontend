@@ -1,10 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import CartContext from "../contexts/CartContext";
 import style from "../styles/items_section.module.css";
 import ItemsData from "../data/items.json";
 import ItemsModel, { Services } from "../interfaces/ItemsModel";
 import ServiceType from "./modals/ServiceType";
 import CartProps from "../interfaces/CartProps";
+import { apiGet } from '../config/AxiosHelper'; 
+import { cloths as clothApi }  from '../config/apis/Cloth'
 
 type CartContextProps = {
   items?: Array<CartProps>;
@@ -33,7 +35,7 @@ export default function ItemsSection() {
   });
   const displayItems: any = allItems.map((item: ItemsModel) => {
     return (
-      <p
+      <p className='cursor-pointer hover:bg-green-200'
         key={item.id}
         onClick={() => {
           // console.log("selectedItem", item);
@@ -64,8 +66,21 @@ export default function ItemsSection() {
       cartContext.addToCart!(cartItem);
     }
   }
+
+  useEffect(() => {
+    async function fetchCloths() {
+      try {
+        const cloths = await apiGet(clothApi.getCloths.url);
+      } catch (error) {
+        // Handle error
+      }
+    }
+
+    fetchCloths();
+  }, []);
+
   return (
-    <div className={style.itemsSection}>
+    <div className={`${style.itemsSection}`}>
       <header>
         <h1>Items Section={cartContext.items!.length}</h1>
       </header>
