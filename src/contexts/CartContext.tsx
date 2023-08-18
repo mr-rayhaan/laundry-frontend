@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useState } from "react";
 import CartProps, { Cart } from "../interfaces/CartProps";
-import ItemsModel from "../interfaces/ItemsModel";
+import ItemsModel from "../interfaces/Cloth";
 
 const CartContext = createContext({});
 
@@ -18,7 +18,7 @@ export function CartProvider({ children }: CartProviderProps) {
     setItems((prevState: Array<CartProps>) => [...prevState, item]);
 
     let tempCart = {
-      totalAmount: cart.totalAmount + item.item.services[0].sizes!.regular,
+      totalAmount: cart.totalAmount + item.item.services[0].price_list.price,
       discount: 0,
     };
     setCart(() => tempCart);
@@ -75,8 +75,8 @@ export function CartProvider({ children }: CartProviderProps) {
     console.log("changeCartItemRate", cartItem);
     let cartItemfromState = items.filter((e) => e.id == cartItem.id)[0];
     cartItemfromState.item.services.map((service) => {
-      if (service.type == cartItem.item.services[0].type) {
-        service.sizes!.custom = rate;
+      if (service.service_name == cartItem.item.services[0].service_name) {
+        service.price_list.price = rate;
       }
     });
     let result = items;
@@ -96,10 +96,10 @@ export function CartProvider({ children }: CartProviderProps) {
     let tempTotalAmount = 0;
     items.forEach((element) => {
       let unitPrice = 0;
-      if (element.item.services[0].sizes!.custom == null) {
-        unitPrice = element.item.services[0].sizes!.regular;
+      if (element.item.services[0].price_list == null) {
+        unitPrice = element.item.services[0].price_list;
       } else {
-        unitPrice = element.item.services[0].sizes!.custom;
+        unitPrice = element.item.services[0].price_list.price;
       }
       tempTotalAmount += unitPrice * element.quantity;
     });

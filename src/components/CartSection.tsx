@@ -2,6 +2,10 @@ import React, { useState, useContext, ReactNode, useEffect } from "react";
 import CartContext from "../contexts/CartContext";
 import CartProps, { Cart } from "../interfaces/CartProps";
 import style from "../styles/cart_section.module.css";
+import Customer from "../interfaces/Customer";
+import CustomerComponent from "./CustomerComponent";
+import { generateAPI } from "../config/ApiGenerate";
+import { customerOrderApis } from "../config/apis/CustomerOrder"
 
 type CartContextProps = {
   items?: Array<CartProps>;
@@ -15,10 +19,9 @@ type CartContextProps = {
 
 export default function CartSection() {
   const cartContext: CartContextProps = useContext(CartContext);
-  console.log("CartSection", cartContext.cart!.discount);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer>()
 
-  // const [cartDiscount, setCartDiscount] = useState(0);
-  // const [totalAmount, setTotalAmount] = useState(0.0);
+  // const [customerInputText, setCustomerInputText] = useState<string>('');
 
   function onChangeItemRate(e: any, cartItem: CartProps) {
     // console.log("onChangeItemRate: ", cartItem);
@@ -40,23 +43,41 @@ export default function CartSection() {
       cartContext.changeCartDiscount!(Number(newDiscount));
     }
   }
+  const createCustomerOrder = async () => {
+
+    const api = customerOrderApis.createCustomerOrder;
+    api.data = {
+      action: 'create',
+      customer_id: selectedCustomer!.id,
+      total_quantity: 0,
+      discount: 0,
+      vat: 0,
+      total_amount: 0,
+      amount_paid: 0,
+      amount_pending: 0,
+      comments: '',
+      employee_id: 0,
+      delivery_date: ''
+    }
+    try {
+      const response = await generateAPI(api)
+      alert(response?.data.message)
+    } catch (ex) {
+      console.log(ex)
+    }
+  }
 
   const cartItems: ReactNode = cartContext.items!.map(
     (element: CartProps, index: number) => {
-      let unitPrice = 0;
-      if (element.item.services[0].sizes!.custom == null) {
-        unitPrice = element.item.services[0].sizes!.regular;
-      } else {
-        unitPrice = element.item.services[0].sizes!.custom;
-      }
+      let unitPrice = element.item.services[0].price_list.price;
 
-      console.log("unitPrice", unitPrice);
+      // console.log("unitPrice", unitPrice);
 
       return (
         <tr key={element.id}>
           <td>{++index}</td>
-          <td>{element.item.name}</td>
-          <td>{element.item.services[0].type}</td>
+          <td>{element.item.cloth_type}</td>
+          <td>{element.item.services[0].service_name}</td>
           <td>
             <input
               type="number"
@@ -81,26 +102,11 @@ export default function CartSection() {
     }
   );
 
-  // useEffect(() => {
-  //   console.log("useEffect CartSection");
-  //   let result = 0;
-  //   cartContext.items!.forEach((element: CartProps) => {
-  //     let unitPrice = 0;
-  //     if (element.item.services[0].sizes!.custom == null) {
-  //       unitPrice = element.item.services[0].sizes!.regular;
-  //     } else {
-  //       unitPrice = element.item.services[0].sizes!.custom;
-  //     }
-  //     result += element.quantity * unitPrice - cartDiscount;
-  //   });
-  //   setTotalAmount(result);
-  //   console.log("result: ", result);
-  // }, [cartContext.items]);
 
   return (
     <div className={style.cartSection}>
-      <h1>Cart Section</h1>
-      {/* <input type="text" defaultValue={searchText} /> */}
+      <CustomerComponent selectedCustomer={selectedCustomer} onSelectCustomer={(value: Customer) => setSelectedCustomer(value)} />
+
       <table width="100%">
         <thead></thead>
         <tbody>
@@ -139,7 +145,9 @@ export default function CartSection() {
           </tr>
         </tbody>
       </table>
-      <button className="bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+      <button className="bg-green-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
+        onClick={createCustomerOrder}
+      >
         Save
       </button>
     </div>

@@ -1,8 +1,6 @@
-// import Button from "react-bootstrap/Button";
-
 import React from "react";
 import Props from "../../interfaces/ServiceTypeProps";
-import { Services } from "../../interfaces/ItemsModel";
+import { Service } from "../../interfaces/Cloth";
 import style from "../../styles/service_modal.module.css";
 
 export default function ServiceType(props: Props) {
@@ -10,7 +8,7 @@ export default function ServiceType(props: Props) {
 
   const services: any =
     selectedItem != undefined ? (
-      selectedItem!.services.map((item: Services) => {
+      selectedItem!.services.map((item: Service) => {
         return (
           <div
             key={item.id}
@@ -21,7 +19,7 @@ export default function ServiceType(props: Props) {
               )
             }
           >
-            {item.type}
+            {item.service_name}
           </div>
         );
       })
@@ -33,11 +31,15 @@ export default function ServiceType(props: Props) {
     toggle: Number
   ) => {
     event.stopPropagation();
-    console.log('toggle', toggle)
-    if (toggle == 0) {
-      console.log('hide it')
-      onHide()
-    }
+    
+    switch(toggle) {
+      case 0:
+        onHide()
+      break; 
+      case 1:
+
+      break;
+    } 
   };
 
   if (show) {
@@ -50,7 +52,7 @@ export default function ServiceType(props: Props) {
           onClick={(event) => handleClick(event, 1)}
           className="h-[fit-content] bg-white p-2 rounded"
         >
-          <h1>{selectedItem?.name}</h1>
+          <h1 >{selectedItem?.cloth_type}</h1>
           <div className={`grid gap-10 p-10 ${style.gridLayout}`}>
             {services}
           </div>

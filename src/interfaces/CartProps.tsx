@@ -1,4 +1,4 @@
-import ItemsModel from "./ItemsModel";
+import ItemsModel from "./Cloth";
 
 export default interface CartProps {
   id: number;

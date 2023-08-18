@@ -4,13 +4,13 @@ import style from "../styles/main_section.module.css";
 import SideBarProps from "../interfaces/SideBarProps";
 import ItemsSection from "./ItemsSection";
 import CartSection from "./CartSection";
-import ItemsModel, { Services } from "../interfaces/ItemsModel";
+import ItemsModel, { Service } from "../interfaces/Cloth";
 import CartProps from "../interfaces/CartProps";
 import { CartProvider } from "../contexts/CartContext";
 
 export default function MainSection(props: SideBarProps) {
   const [item, setItem] = useState<ItemsModel>();
-  const [service, setService] = useState<Services>(); 
+  const [service, setService] = useState<Service>();
 
   const mainSectionWidth = props.isSideBarOpen
     ? style.wrapperCollapsed

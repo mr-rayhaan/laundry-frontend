@@ -1,5 +1,5 @@
 import React from "react";
-import ItemsModel from "./ItemsModel";
+import ItemsModel from "./Cloth";
 
 export default interface ServiceTypeProps {
     show: boolean;
