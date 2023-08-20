@@ -4,8 +4,8 @@ import style from "../styles/main_section.module.css";
 import SideBarProps from "../interfaces/SideBarProps";
 import ItemsSection from "./ItemsSection";
 import CartSection from "./CartSection";
-import ItemsModel, { Service } from "../interfaces/Cloth";
-import CartProps from "../interfaces/CartProps";
+import ItemsModel from "../interfaces/Cloth";
+import Service from "../interfaces/Service";
 import { CartProvider } from "../contexts/CartContext";
 
 export default function MainSection(props: SideBarProps) {

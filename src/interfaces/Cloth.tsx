@@ -1,3 +1,4 @@
+import Service from "./Service";
 
 export default interface Cloth {
   id: number;
@@ -9,17 +10,6 @@ export default interface Cloth {
   services: Array<Service>;
 }
 
-export interface Service {
-  id: number;
-  service_name: string;
-  service_code: string;
-  created_at: Date
-  updated_at: Date
-  price_list: PriceList
-}
 
-export interface PriceList {
-  cloth_id: number;
-  service_id: number;
-  price: number;
-}
+
+

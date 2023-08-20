@@ -1,126 +1,140 @@
 import React, { ReactNode, createContext, useState } from "react";
-import CartProps, { Cart } from "../interfaces/CartProps";
-import ItemsModel from "../interfaces/Cloth";
+import CartItem from "../interfaces/CartItem";
+import Cloth from "../interfaces/Cloth";
+import { CartContextProps } from "../types/CartContextProps";
+import Service from "../interfaces/Service";
+import CartModel from "../interfaces/CartModel";
 
-const CartContext = createContext({});
+const initialCartModel: CartModel = {
+  cartItems: [],
+  discount: 0,
+  totalAmount: 0,
+  totalQuantity: 0,
+  vat: 0,
+  amountPaid: 0
+}
+
+const CartContext = createContext({
+  cartModel: initialCartModel,
+  addToCart: (cloth: Cloth, service: Service) => { },
+  updateCartItemQuantity: (quantity: number, cartItemId: number) => { },
+  updateCartItemRate: (rate: number, cartItem: CartItem) => { },
+  updateCartDiscount: (discount: number) => { },
+  updateAmountPaid: (amountPaid: number) => { }
+  // ... other properties and functions
+});
 
 type CartProviderProps = {
   children: ReactNode;
 };
 
 export function CartProvider({ children }: CartProviderProps) {
-  // console.log("CartProvider");
-  const [items, setItems] = useState<Array<CartProps>>([]);
-  const [cart, setCart] = useState<Cart>({ totalAmount: 0, discount: 0 });
+  const [cartModel, setCartModel] = useState<CartModel>(initialCartModel)
 
-  const addToCart = (item: CartProps) => {
-    console.log("Cart Context addToCart");
-    setItems((prevState: Array<CartProps>) => [...prevState, item]);
+  const addToCart = (cloth: Cloth, service: Service) => {
+    // console.log("Cart Context addToCart")
 
-    let tempCart = {
-      totalAmount: cart.totalAmount + item.item.services[0].price_list.price,
-      discount: 0,
-    };
-    setCart(() => tempCart);
-  };
-
-  const itemExists = (item: ItemsModel) => {
-    if (items.length < 1) {
-      return false;
+    const result: Array<CartItem> = cartModel.cartItems.filter((element: CartItem) =>
+      element.cloth.id == cloth.id &&
+      element.service.id == service.id
+    );
+    if (result.length == 0) {
+      //ADD NEW ITEM TO CART
+      addNewItemToCart({ id: cartModel.cartItems.length + 1, cloth: cloth, service: service, rate: service.price_list.price, quantity: 1, totalAmount: service.price_list.price })
+    } else {
+      //UPDATE QUANTITY OF CARTITEM
+      updateCartItemQuantity(result[0].quantity + 1, result[0].id)
     }
-    const result: CartProps = items.find(
-      (element) =>
-        element.item.id == item.id &&
-        element.item.services[0].id == item.services[0].id
-    )!;
-    if (result == undefined) {
-      return false;
-    }
-    return true;
-  };
-  const updateCartItemQuantity = (item: ItemsModel) => {
-    // console.log("update quantity");
-    let result = items;
-    result.map((e) => {
-      if (
-        e.item.id == item.id &&
-        e.item.services[0].id == item.services[0].id
-      ) {
-        console.log("increment quantity");
-        e.quantity = e.quantity + 1;
-        return e;
-      }
+
+  }
+  function addNewItemToCart(newItem: CartItem) {
+    console.log('addNewItemToCart')
+    // Clone the current cart items array and add the new item
+    const updatedCartItems = [...cartModel.cartItems, newItem];
+
+    // Calculate the new total amount
+    const newTotalAmount = cartModel.totalAmount + newItem.totalAmount
+
+    // Update the cartModel state
+    setCartModel({
+      ...cartModel,
+      cartItems: updatedCartItems,
+      totalAmount: newTotalAmount,
+      totalQuantity: cartModel.totalQuantity + 1
     });
-    calculateCartAmount();
+  }
+  const updateCartItemQuantity = (quantity: number, cartItemId: number) => {
+    console.log("updateCartItemQuantity")
 
-    setItems((prevState: Array<CartProps>) => [...result]);
-
-    // console.log(items);
-  };
-  const changeCartItemQuantity = (quantity: number, cartItemId: number) => {
-    console.log("editCartItemQuantity", quantity, cartItemId);
-    let result = items;
-    result.map((e) => {
-      if (e.id == cartItemId) {
-        e.quantity = quantity;
-        return e;
+    const updatedCartItems = cartModel.cartItems.map((cartItem: CartItem) => {
+      if (cartItem.id == cartItemId) {
+        cartItem.quantity = quantity;
+        cartItem.totalAmount = cartItem.rate * quantity
       }
+      return cartItem;
     });
+    let newTotalAmount = updatedCartItems.reduce(
+      (total, cartItem) => total + cartItem.totalAmount, 0);
+    newTotalAmount -= cartModel.discount
 
-    calculateCartAmount();
-
-    setItems((prevState: Array<CartProps>) => [...result]);
+    setCartModel({
+      ...cartModel,
+      cartItems: updatedCartItems,
+      totalAmount: newTotalAmount,
+      totalQuantity: cartModel.cartItems.reduce((total, cartItem) => total + cartItem.quantity, 0)
+    })
   };
-  const changeCartItemRate = (rate: number, cartItem: CartProps) => {
-    console.log("changeCartItemRate", cartItem);
-    let cartItemfromState = items.filter((e) => e.id == cartItem.id)[0];
-    cartItemfromState.item.services.map((service) => {
-      if (service.service_name == cartItem.item.services[0].service_name) {
-        service.price_list.price = rate;
+  const updateCartItemRate = (rate: number, cartItem: CartItem) => {
+    console.log("updateCartItemRate", cartItem, rate)
+
+    let cartItemfromState = cartModel.cartItems.filter((e) => e.id == cartItem.id)[0]
+
+    cartItemfromState.service.price_list.price = rate
+    cartItemfromState.rate = rate
+    cartItemfromState.totalAmount = cartItemfromState.rate * cartItemfromState.quantity
+
+    const updatedCartItems = cartModel.cartItems.map((cartItem: CartItem) => {
+      if (cartItem.id == cartItemfromState.id) {
+        cartItem = cartItemfromState
       }
-    });
-    let result = items;
-    result.filter((e) => e.id == cartItem.id)[0] = cartItemfromState;
+      return cartItem
 
-    calculateCartAmount();
+    })
+    let updatedTotalAmount = updatedCartItems.reduce(
+      (total, cartItem) => total + cartItem.totalAmount,
+      0
+    )
+    updatedTotalAmount -= cartModel.discount
 
-    setItems((prevState: Array<CartProps>) => [...result]);
+
+    setCartModel({ ...cartModel, cartItems: [...updatedCartItems], totalAmount: updatedTotalAmount })
+
   };
-  const changeCartDiscount = (discount: number) => {
-    console.log("changeCartDiscount", discount);
+  const updateCartDiscount = (discount: number) => {
+    console.log("updateCartDiscount", discount)
+    let newTotalAmount = 0
 
-    calculateCartAmount(discount);
-  };
+    cartModel.cartItems.forEach((cartItem) => {
+      newTotalAmount += cartItem.quantity * cartItem.rate
+    })
+    newTotalAmount -= discount
 
-  const calculateCartAmount = (discount?: number) => {
-    let tempTotalAmount = 0;
-    items.forEach((element) => {
-      let unitPrice = 0;
-      if (element.item.services[0].price_list == null) {
-        unitPrice = element.item.services[0].price_list;
-      } else {
-        unitPrice = element.item.services[0].price_list.price;
-      }
-      tempTotalAmount += unitPrice * element.quantity;
-    });
-    let tempCart = {
-      totalAmount: tempTotalAmount - (discount == null ? cart.discount : discount),
-      discount: discount == null ? cart.discount : discount,
-    };
-    console.log(tempCart)
-    setCart(() => tempCart);
+    setCartModel({ ...cartModel, discount: discount, totalAmount: newTotalAmount })
   };
+  const updateAmountPaid = (value: number) => {
+    // cartModel.amountPaid = value
+    setCartModel({ ...cartModel, amountPaid: value })
+  }
+
   return (
     <CartContext.Provider
       value={{
-        items,
-        cart,
+        cartModel,
         addToCart,
-        itemExists,
         updateCartItemQuantity,
-        changeCartItemQuantity,
-        changeCartItemRate,
-        changeCartDiscount,
+        updateCartItemRate,
+        updateCartDiscount,
+        updateAmountPaid
       }}
     >
       {children}

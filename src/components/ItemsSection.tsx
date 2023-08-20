@@ -1,28 +1,22 @@
 import React, { useContext, useEffect } from "react";
+import style from "../styles/items_section.module.css"
+
 import CartContext from "../contexts/CartContext";
-import style from "../styles/items_section.module.css";
-import ItemsData from "../data/items.json";
-import Cloth, { Service } from "../interfaces/Cloth";
-import ServiceType from "./modals/ServiceType";
-import CartProps from "../interfaces/CartProps";
-// import { apiGet } from '../config/AxiosHelper';
+
 import { cloths as clothApi } from '../config/apis/Cloth'
 import { generateAPI } from "../config/ApiGenerate";
+ 
+import Cloth from "../interfaces/Cloth"; 
+import Service from "../interfaces/Service"
 
-type CartContextProps = {
-  items?: Array<CartProps>;
-  cartTotal?: Object;
-  itemExists?: Function;
-  updateCartItemQuantity?: Function;
-  addToCart?: Function;
-};
+import ServicesModal from "./modals/ServicesModal";
 
 export default function ItemsSection() {
   const [cloths, setCloths] = React.useState<Cloth[]>();
   const [modalService, setModalService] = React.useState<boolean>(false);
   const [selectedCloth, setSelectedCloth] = React.useState<Cloth>();
 
-  const { ...cartContext }: CartContextProps = useContext(CartContext);
+  const cartContext = useContext(CartContext);
 
   // console.log("ItemsSection", cartContext);
 
@@ -65,28 +59,13 @@ export default function ItemsSection() {
     )
   })
   function onSelectService(service: Service) {
-    const item: Cloth = { ...selectedCloth! };
-    item.services = [service];
     setModalService(false);
-    console.log("selectedItem:", item);
-
-    const result = cartContext.itemExists!(item);
-    // console.log("item exists= ", result);
-    if (result) {
-      cartContext.updateCartItemQuantity!(item);
-    } else {
-      const cartItem: CartProps = {
-        id: cartContext.items!.length + 1,
-        item: item,
-        quantity: 1,
-      };
-      cartContext.addToCart!(cartItem);
-    }
+    const result = cartContext.addToCart(selectedCloth!, service)
   }
 
   useEffect(() => {
     async function fetchCloths() {
-      
+
       try {
         const api = clothApi.getCloths
         var response: any = await generateAPI(api)
@@ -111,10 +90,10 @@ export default function ItemsSection() {
   return (
     <div className={`${style.itemsSection}`}>
       <header>
-        <h1>Items Section={cartContext.items!.length}</h1>
+        <h1>Items Section={cartContext.cartModel.cartItems.length}</h1>
       </header>
       <main className={style.gridLayout}>{displayItems}</main>
-      <ServiceType
+      <ServicesModal
         show={modalService}
         onHide={() => setModalService(false)}
         selectedItem={selectedCloth}

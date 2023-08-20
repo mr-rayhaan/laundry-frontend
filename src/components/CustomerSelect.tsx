@@ -1,23 +1,25 @@
-import react, { useState } from 'react'
+import { useState } from 'react'
 import Customer from '../interfaces/Customer'
 import { generateAPI } from '../config/ApiGenerate'
 import AsyncSelect from 'react-select/async';
 import { customerApis } from "../config/apis/Customer"
-import { ActionMeta, SingleValue } from 'react-select/dist/declarations/src/types';
-interface CustomerComponentProps {
-    customers?: Customer[]
-    selectedCustomer?: Customer
-    onSelectCustomer: Function
+
+interface CustomerSelectProps {
+    allOptions?: Customer[]
+    selectedOption?: Customer
+    onSelectOption: Function
 }
 interface OptionType {
+    id: number
     name: string
     phone: string[]
     address: string[]
 }
-export default function CustomerComponent(props: CustomerComponentProps) {
-    const [customers, setCustomers] = useState<Customer[]>();
 
-    console.log('CustomerComponent', props)
+export default function CustomerSelect(props: CustomerSelectProps) {
+    const [allOptions, setAllOptions] = useState<Customer[]>();
+
+    console.log('CustomerSelect props', props)
 
     const loadOptions = (inputValue: string, callback: Function) => {
         // Perform an API request to fetch options based on inputValue
@@ -38,13 +40,13 @@ export default function CustomerComponent(props: CustomerComponentProps) {
                     customersResponse = response.data.customers.map((customer: Customer) => {
 
 
-                        customer.created_at = new Date(customer.created_at)
-                        customer.updated_at = new Date(customer.updated_at)
+                        customer.createdAt = new Date(customer.createdAt)
+                        customer.updatedAt = new Date(customer.updatedAt)
                         return customer
                     })
                 }
 
-                setCustomers(customersResponse)
+                setAllOptions(customersResponse)
 
                 callback(customersResponse);
             })
@@ -74,9 +76,9 @@ export default function CustomerComponent(props: CustomerComponentProps) {
                     isSearchable
                     loadOptions={loadOptions}
                     formatOptionLabel={formatOptionLabel}
-                    defaultOptions={customers}
+                    defaultOptions={allOptions}
                     placeholder={''}
-                    onChange={(e) => props.onSelectCustomer(e)}
+                    onChange={(e) => props.onSelectOption(e)}
                 />
             </div>
         </>

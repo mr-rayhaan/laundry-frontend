@@ -1,9 +1,9 @@
 import React from "react";
-import Props from "../../interfaces/ServiceTypeProps";
-import { Service } from "../../interfaces/Cloth";
+import Service from "../../interfaces/Service";
 import style from "../../styles/service_modal.module.css";
+import { ServiceProps } from "../../types/ServiceProps";
 
-export default function ServiceType(props: Props) {
+export default function ServicesModal(props: ServiceProps) {
   const { show, onHide, selectedItem, onSelectService } = props;
 
   const services: any =
@@ -31,15 +31,15 @@ export default function ServiceType(props: Props) {
     toggle: Number
   ) => {
     event.stopPropagation();
-    
-    switch(toggle) {
+
+    switch (toggle) {
       case 0:
         onHide()
-      break; 
+        break;
       case 1:
 
-      break;
-    } 
+        break;
+    }
   };
 
   if (show) {

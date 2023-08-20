@@ -1,7 +1,10 @@
-import CartProps from "./CartProps";
+import CartItem from "./CartItem";
 
 export default interface CartModel {
-  cartPropsArray?: CartProps[];
-  totalQuantity?: number;
-  totalAmount?: number;
+  cartItems: Array<CartItem>
+  totalQuantity: number
+  totalAmount: number
+  discount: number
+  vat: number
+  amountPaid: number
 }
